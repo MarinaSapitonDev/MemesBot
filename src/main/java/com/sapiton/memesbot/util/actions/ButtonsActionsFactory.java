@@ -1,9 +1,9 @@
-package com.example.memesbot.util.actions;
+package com.sapiton.memesbot.util.actions;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.memesbot.util.Buttons.*;
+import static com.sapiton.memesbot.util.Buttons.*;
 
 public class ButtonsActionsFactory {
     private static final Map<String, ButtonsAction> actions = new HashMap<>();

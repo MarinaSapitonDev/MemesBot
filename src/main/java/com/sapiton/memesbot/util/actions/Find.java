@@ -1,11 +1,10 @@
-package com.example.memesbot.util.actions;
+package com.sapiton.memesbot.util.actions;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public class Add implements ButtonsAction {
-
+public class Find implements ButtonsAction {
     @Override
     public String doAction(Update update) {
-        return "folder created";
+        return "find meme";
     }
 }
