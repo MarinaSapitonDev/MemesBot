@@ -1,6 +1,6 @@
-package com.example.memesbot.config;
+package com.sapiton.memesbot.config;
 
-import com.example.memesbot.MemesBot;
+import com.sapiton.memesbot.MemesBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;

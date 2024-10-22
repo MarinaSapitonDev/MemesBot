@@ -1,4 +1,4 @@
-package com.example.memesbot;
+package com.sapiton.memesbot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

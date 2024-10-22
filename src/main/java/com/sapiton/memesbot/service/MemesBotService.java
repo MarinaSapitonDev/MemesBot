@@ -1,4 +1,4 @@
-package com.example.memesbot.service;
+package com.sapiton.memesbot.service;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.memesbot.util.Buttons.*;
+import static com.sapiton.memesbot.util.Buttons.*;
 
 @Service
 public class MemesBotService {
@@ -52,7 +52,4 @@ public class MemesBotService {
         inlineKeyboardMarkup.setKeyboard(rowList);
         message.setReplyMarkup(inlineKeyboardMarkup);
     }
-public void createFolder(){
-
-}
 }

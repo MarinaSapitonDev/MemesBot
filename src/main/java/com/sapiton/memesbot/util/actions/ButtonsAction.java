@@ -1,4 +1,4 @@
-package com.example.memesbot.util.actions;
+package com.sapiton.memesbot.util.actions;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 

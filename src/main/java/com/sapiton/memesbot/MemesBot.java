@@ -1,10 +1,10 @@
-package com.example.memesbot;
+package com.sapiton.memesbot;
 
-import com.example.memesbot.config.BotConfig;
-import com.example.memesbot.service.MemesBotService;
-import com.example.memesbot.util.FileProcessor;
-import com.example.memesbot.util.actions.ButtonsAction;
-import com.example.memesbot.util.actions.ButtonsActionsFactory;
+import com.sapiton.memesbot.config.BotConfig;
+import com.sapiton.memesbot.service.MemesBotService;
+import com.sapiton.memesbot.util.FileProcessor;
+import com.sapiton.memesbot.util.actions.ButtonsAction;
+import com.sapiton.memesbot.util.actions.ButtonsActionsFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;

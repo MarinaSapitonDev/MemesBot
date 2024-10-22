@@ -1,4 +1,4 @@
-package com.example.memesbot.config;
+package com.sapiton.memesbot.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

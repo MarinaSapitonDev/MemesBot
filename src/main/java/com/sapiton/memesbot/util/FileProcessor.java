@@ -1,6 +1,6 @@
-package com.example.memesbot.util;
+package com.sapiton.memesbot.util;
 
-import com.example.memesbot.config.BotConfig;
+import com.sapiton.memesbot.config.BotConfig;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
