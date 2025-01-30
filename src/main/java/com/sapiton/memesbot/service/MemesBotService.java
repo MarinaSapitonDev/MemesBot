@@ -52,4 +52,7 @@ public class MemesBotService {
         inlineKeyboardMarkup.setKeyboard(rowList);
         message.setReplyMarkup(inlineKeyboardMarkup);
     }
+
+    //TODO ask Vitalij to review the code
+
 }
