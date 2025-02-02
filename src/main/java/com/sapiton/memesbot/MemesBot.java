@@ -119,7 +119,6 @@ public class MemesBot extends TelegramLongPollingBot {
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
 
-
         try {
             execute(message);
         } catch (TelegramApiException e) {

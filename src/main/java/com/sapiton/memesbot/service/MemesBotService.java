@@ -1,5 +1,6 @@
 package com.sapiton.memesbot.service;
 
+import com.sapiton.memesbot.util.actions.Button;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
@@ -15,41 +16,47 @@ import static com.sapiton.memesbot.util.Buttons.*;
 @Service
 public class MemesBotService {
 
+    public static final int BUTTONS_PER_ROW = 2;
+
     public String getFileId(Update update) {
         List<PhotoSize> photos = update.getMessage().getPhoto();
         // Select the highest resolution photo (the last one in the list)
         return photos.get(photos.size() - 1).getFileId();
-
     }
 
-    public void setKeyBoard(SendMessage message){
+    public void setKeyBoard(SendMessage message) {
+        createButtons(message, initializeButtons());
+    }
 
-        InlineKeyboardButton buttonAdd = new InlineKeyboardButton();
-        buttonAdd.setText(ADD.name());
-        buttonAdd.setCallbackData(ADD.name());
+    public List<Button> initializeButtons(){
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(new Button(ADD.name(), ADD.name()));
+        buttons.add(new Button(FIND.name(), FIND.name()));
+        buttons.add(new Button(SHOW.name(), SHOW.name()));
+        return buttons;
+    }
 
-        InlineKeyboardButton buttonFind = new InlineKeyboardButton();
-        buttonFind.setText(FIND.name());
-        buttonFind.setCallbackData(FIND.name());
-
-        InlineKeyboardButton buttonShow = new InlineKeyboardButton();
-        buttonShow.setText(SHOW.name());
-        buttonShow.setCallbackData(SHOW.name());
-
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> keyboardFirstRow = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardSecondRow = new ArrayList<>();
-
-        keyboardFirstRow.add(buttonAdd);
-        keyboardFirstRow.add(buttonFind);
-        keyboardSecondRow.add(buttonShow);
+    public void createButtons(SendMessage message, List<Button> buttons) {
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardFirstRow);
-        rowList.add(keyboardSecondRow);
+        List<InlineKeyboardButton> row = new ArrayList<>();
 
+        for (int i = 0; i < buttons.size(); i++) {
+            Button button = buttons.get(i);
+            InlineKeyboardButton telegramButton = new InlineKeyboardButton();
+            telegramButton.setText(button.getText());
+            telegramButton.setCallbackData(button.getName());
+            row.add(telegramButton);
+
+            if ((i + 1) % BUTTONS_PER_ROW == 0 || i == buttons.size() - 1) {
+                rowList.add(row);
+                row = new ArrayList<>();
+            }
+        }
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.setKeyboard(rowList);
         message.setReplyMarkup(inlineKeyboardMarkup);
     }
+    //TODO ask Vitalij to review the code
 }
