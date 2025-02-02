@@ -28,6 +28,7 @@ public class MemesBot extends TelegramLongPollingBot {
     private final BotConfig botConfig;
     private final MemesBotService service;
     private final FileProcessor fileProcessor;
+    private final ButtonsActionsFactory buttonsActionsFactory;
 
     @Override
     public String getBotUsername() {
@@ -78,13 +79,14 @@ public class MemesBot extends TelegramLongPollingBot {
 
     private void handleCallbackQuery(Update update) {
         try {
-
             SendMessage sendMessage = new SendMessage();
-            sendMessage.setText(update.getCallbackQuery().getData());
+            //TODO change the text
+            sendMessage.setText("choose one of the options");
             sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
 
-            ButtonsAction action = ButtonsActionsFactory.getAction(update.getCallbackQuery().getData());
-            sendMessage.setText(action.doAction(update));
+            ButtonsAction action = buttonsActionsFactory.getAction(update.getCallbackQuery().getData());
+            service.setKeyBoard(sendMessage, action, update);
+            /*sendMessage.setText(action.doAction(update));*/
 
             execute(sendMessage);
 
@@ -130,7 +132,7 @@ public class MemesBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("Choose further action");
-        service.setKeyBoard(message);
+        service.setInitialKeyBoard(message);
 
         try {
             execute(message);

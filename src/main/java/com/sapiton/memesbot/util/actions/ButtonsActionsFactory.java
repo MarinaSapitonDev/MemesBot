@@ -1,23 +1,22 @@
 package com.sapiton.memesbot.util.actions;
 
-import java.util.HashMap;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
-import static com.sapiton.memesbot.util.Buttons.*;
 
+@Component
+@AllArgsConstructor
 public class ButtonsActionsFactory {
-    private static final Map<String, ButtonsAction> actions = new HashMap<>();
+    private final Map<String, ButtonsAction> actions;
 
-    static {
-        actions.put(ADD.name(),new Add());
-        actions.put(FIND.name(),new Find());
-        actions.put(SHOW.name(),new Show());
-    }
-
-    public static ButtonsAction getAction(String buttonType){
+    public ButtonsAction getAction(String buttonType) {
+        actions.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value.getClass().getName()));
         ButtonsAction action = actions.get(buttonType);
-        if(action==null)
-            throw new IllegalArgumentException();
+        if (action == null)
+            throw new IllegalArgumentException("Action not found for button type: " + buttonType);
         return action;
     }
 }

@@ -9,17 +9,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sapiton.memesbot.util.Buttons.*;
-
 @AllArgsConstructor
 @Component
-public class Add implements ButtonsAction {
- public MemesBotService service;
+public class ChooseCategory implements ButtonsAction {
+    public MemesBotService service;
+
     @Override
     public List<Button> doAction(Update update) {
         List<Button> buttons = new ArrayList<>();
-        buttons.add(new Button(CREATE_CATEGORY.getText(),CREATE_CATEGORY.getText() ));
-        buttons.add(new Button(CHOOSE_CATEGORY.getText(),CHOOSE_CATEGORY.getText()));
+        //TODO should return categories dynamically as buttons
         return buttons;
     }
 }
+
