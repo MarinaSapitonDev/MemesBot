@@ -19,17 +19,17 @@ public class MemesBotService {
 
     public static final int BUTTONS_PER_ROW = 2;
 
-    public String getFileId(Update update) {
+    public String getFileId(final Update update) {
         List<PhotoSize> photos = update.getMessage().getPhoto();
         // Select the highest resolution photo (the last one in the list)
         return photos.get(photos.size() - 1).getFileId();
     }
 
-    public void setInitialKeyBoard(SendMessage message) {
+    public void setInitialKeyBoard(final SendMessage message) {
         message.setReplyMarkup(createButtons( initializeDefaultButtons()));
     }
 
-    public List<Button> initializeDefaultButtons(){
+    private List<Button> initializeDefaultButtons(){
         List<Button> buttons = new ArrayList<>();
         buttons.add(new Button(ADD.getText(), ADD.getText()));
         buttons.add(new Button(FIND.getText(), FIND.getText()));
@@ -37,11 +37,11 @@ public class MemesBotService {
         return buttons;
     }
 
-    public void setKeyBoard(SendMessage message, ButtonsAction action, Update update) {
+    public void setKeyBoard(final SendMessage message, final ButtonsAction action, final Update update) {
         message.setReplyMarkup(createButtons(action.doAction(update)));
     }
 
-    public InlineKeyboardMarkup createButtons( List<Button> buttons) {
+    private InlineKeyboardMarkup createButtons( List<Button> buttons) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
 

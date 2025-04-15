@@ -6,6 +6,8 @@ import com.sapiton.memesbot.util.FileProcessor;
 import com.sapiton.memesbot.util.actions.ButtonsAction;
 import com.sapiton.memesbot.util.actions.ButtonsActionsFactory;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -17,10 +19,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
+//TODO check where arguments should be final and add sonar plugin
 @Component
 @AllArgsConstructor
 public class MemesBot extends TelegramLongPollingBot {
@@ -51,7 +54,7 @@ public class MemesBot extends TelegramLongPollingBot {
 
     private void handleMessage(Update update) {
 
-        Map<String, Consumer<Update>> messageHandler = new HashMap();
+        Map<String, Consumer<Update>> messageHandler = new HashMap<>();
         messageHandler.put("text", this::handleText);
         messageHandler.put("photo", this::handlePhoto);
 
@@ -72,7 +75,13 @@ public class MemesBot extends TelegramLongPollingBot {
         long chatId = update.getMessage().getChatId();
 
         Map<String, Runnable> commands = new HashMap<>();
-        commands.put("/start", () -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName()));
+        commands.put("/start", () -> {
+            try {
+                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         commands.put("/help", () -> sendHelpMessage(chatId));
         commands.getOrDefault(messageText, () -> sendDefaultImage(chatId)).run();
     }
@@ -106,7 +115,7 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
-    public void startCommandReceived(long chatId, String firstName) {
+    public void startCommandReceived(long chatId, String firstName) throws IOException {
         sendGreetingImage(chatId);
         sendMessage(chatId, "Hi " + firstName +" Welcome to your favorite memes");
         sendStartKeyboard(chatId);
@@ -156,13 +165,18 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
-    public void sendGreetingImage(long chatId){
+    public void sendGreetingImage(long chatId) throws IOException {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
-
         sendPhotoRequest.setParseMode("HTML");
-        sendPhotoRequest.setPhoto(new InputFile(new File("greet.jpg")));
 
+       /* Resource resource = new ClassPathResource("images/greet.jpg");
+        File file = resource.getFile();
+        sendPhotoRequest.setPhoto(new InputFile(file));*/
+
+        Resource resource = new ClassPathResource("static/images/greet.jpg");
+        InputStream inputStream = resource.getInputStream();
+        sendPhotoRequest.setPhoto(new InputFile(inputStream, "greet.jpg"));
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
@@ -176,6 +190,7 @@ public class MemesBot extends TelegramLongPollingBot {
 
         sendPhotoRequest.setParseMode("HTML");
         sendPhotoRequest.setCaption("Лох");
+        //TODO change the path
         sendPhotoRequest.setPhoto(new InputFile(new File("image.jpg")));
 
         try {
