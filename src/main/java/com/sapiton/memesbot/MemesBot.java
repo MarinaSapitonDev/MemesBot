@@ -5,6 +5,7 @@ import com.sapiton.memesbot.service.MemesBotService;
 import com.sapiton.memesbot.util.FileProcessor;
 import com.sapiton.memesbot.util.actions.ButtonsAction;
 import com.sapiton.memesbot.util.actions.ButtonsActionsFactory;
+import exceptions.TelegramException;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -37,7 +38,7 @@ public class MemesBot extends TelegramLongPollingBot {
     public String getBotUsername() {
         return botConfig.getBotName();
     }
-
+    //TODO deprecated method?
     @Override
     public String getBotToken() {
         return botConfig.getToken();
@@ -95,7 +96,6 @@ public class MemesBot extends TelegramLongPollingBot {
 
             ButtonsAction action = buttonsActionsFactory.getAction(update.getCallbackQuery().getData());
             service.setKeyBoard(sendMessage, action, update);
-            /*sendMessage.setText(action.doAction(update));*/
 
             execute(sendMessage);
 
@@ -133,7 +133,7 @@ public class MemesBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            throw new TelegramException("Telegram exception occurred while sending message",e);
         }
     }
 
@@ -146,7 +146,7 @@ public class MemesBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            throw new TelegramException("Telegram exception occurred while setting initial keyboard",e);
         }
     }
 
@@ -161,7 +161,7 @@ public class MemesBot extends TelegramLongPollingBot {
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
 
@@ -180,7 +180,7 @@ public class MemesBot extends TelegramLongPollingBot {
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
 
@@ -200,13 +200,13 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
-    public void uploadImage(String file_id) throws IOException, TelegramApiException {
+    public void uploadImage(String fileId) throws IOException, TelegramApiException {
 
         final GetFile getFileMethod = new GetFile();
-        getFileMethod.setFileId(file_id);
+        getFileMethod.setFileId(fileId);
 
         org.telegram.telegrambots.meta.api.objects.File file = execute(getFileMethod);
-        fileProcessor.save(file_id, file);
+        fileProcessor.save(fileId, file);
     }
 }
 
