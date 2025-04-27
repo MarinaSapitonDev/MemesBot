@@ -59,7 +59,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-          task-definition: memes-bot-task-revision4.json
+          task-definition: task-defenition.json
           container-name: MarinaSContainer
           image: ${{ steps.build-image.outputs.image }}
         
