@@ -45,15 +45,15 @@ jobs:
     #       username: ${{ secrets.DOCKER_USERNAME }}
     #       password: ${{ secrets.DOCKER_PASSWORD }} 
            
-    - name: Update AWS ECR with the latest image  
+   # - name: Update AWS ECR with the latest image  
     
-      uses: mr-smithers-excellent/docker-build-push@v6
-      with:
-        image: sapiton/memesbot
-        tags: latest
-        registry: 352159925910.dkr.ecr.eu-north-1.amazonaws.com
-    env:
-       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+   #   uses: mr-smithers-excellent/docker-build-push@v6
+   #   with:
+   #     image: sapiton/memesbot
+   #     tags: latest
+   #     registry: 352159925910.dkr.ecr.eu-north-1.amazonaws.com
+   # env:
+   #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+   #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   
