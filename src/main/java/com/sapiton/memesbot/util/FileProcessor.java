@@ -20,16 +20,16 @@ public class FileProcessor {
         this.botConfig = botConfig;
     }
 
-    private final static String path = "./photos/";
-    private final static String extension = ".jpg";
-    private final static String url = "https://api.telegram.org/file/bot";
+    private static final String path = "./photos/";
+    private static final String extension = ".jpg";
+    private static final String url = "https://api.telegram.org/file/bot";
 
-    public void save(String file_id, org.telegram.telegrambots.meta.api.objects.File file) throws IOException {
+    public void save(String fileId, org.telegram.telegrambots.meta.api.objects.File file) throws IOException {
         InputStream is = new URL(url + botConfig.getToken() + "/" + file.getFilePath()).openStream();
-        File localFile = new File(path + file_id + extension);
+        File localFile = new File(path + fileId + extension);
         FileUtils.copyInputStreamToFile(is, localFile);
         is.close();
 
-        System.out.println("uploaded");
+        //TODO add logs System.out.println("uploaded");
     }
 }

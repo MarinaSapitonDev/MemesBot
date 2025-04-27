@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Button {
-    public String name;
-    public String text;
+    private String name;
+    private String text;
 }

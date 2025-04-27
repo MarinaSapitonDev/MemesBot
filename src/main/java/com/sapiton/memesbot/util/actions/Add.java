@@ -14,7 +14,6 @@ import static com.sapiton.memesbot.util.Buttons.*;
 @AllArgsConstructor
 @Component
 public class Add implements ButtonsAction {
- public MemesBotService service;
     @Override
     public List<Button> doAction(Update update) {
         List<Button> buttons = new ArrayList<>();
