@@ -5,7 +5,11 @@ import com.sapiton.memesbot.service.MemesBotService;
 import com.sapiton.memesbot.util.FileProcessor;
 import com.sapiton.memesbot.util.actions.ButtonsAction;
 import com.sapiton.memesbot.util.actions.ButtonsActionsFactory;
+import exceptions.TelegramException;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -17,10 +21,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
+//TODO check where arguments should be final and add sonar plugin
 @Component
 @AllArgsConstructor
 public class MemesBot extends TelegramLongPollingBot {
@@ -28,12 +33,13 @@ public class MemesBot extends TelegramLongPollingBot {
     private final BotConfig botConfig;
     private final MemesBotService service;
     private final FileProcessor fileProcessor;
+    private final ButtonsActionsFactory buttonsActionsFactory;
 
     @Override
     public String getBotUsername() {
         return botConfig.getBotName();
     }
-
+    //TODO deprecated method?
     @Override
     public String getBotToken() {
         return botConfig.getToken();
@@ -50,7 +56,7 @@ public class MemesBot extends TelegramLongPollingBot {
 
     private void handleMessage(Update update) {
 
-        Map<String, Consumer<Update>> messageHandler = new HashMap();
+        Map<String, Consumer<Update>> messageHandler = new HashMap<>();
         messageHandler.put("text", this::handleText);
         messageHandler.put("photo", this::handlePhoto);
 
@@ -71,20 +77,26 @@ public class MemesBot extends TelegramLongPollingBot {
         long chatId = update.getMessage().getChatId();
 
         Map<String, Runnable> commands = new HashMap<>();
-        commands.put("/start", () -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName()));
+        commands.put("/start", () -> {
+            try {
+                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         commands.put("/help", () -> sendHelpMessage(chatId));
         commands.getOrDefault(messageText, () -> sendDefaultImage(chatId)).run();
     }
 
     private void handleCallbackQuery(Update update) {
         try {
-
             SendMessage sendMessage = new SendMessage();
-            sendMessage.setText(update.getCallbackQuery().getData());
+            //TODO change the text
+            sendMessage.setText("choose one of the options");
             sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
 
-            ButtonsAction action = ButtonsActionsFactory.getAction(update.getCallbackQuery().getData());
-            sendMessage.setText(action.doAction(update));
+            ButtonsAction action = buttonsActionsFactory.getAction(update.getCallbackQuery().getData());
+            service.setKeyBoard(sendMessage, action, update);
 
             execute(sendMessage);
 
@@ -104,7 +116,7 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
-    public void startCommandReceived(long chatId, String firstName) {
+    public void startCommandReceived(long chatId, String firstName) throws IOException {
         sendGreetingImage(chatId);
         sendMessage(chatId, "Hi " + firstName +" Welcome to your favorite memes");
         sendStartKeyboard(chatId);
@@ -114,6 +126,7 @@ public class MemesBot extends TelegramLongPollingBot {
         sendMessage(chatId, " How can I help?");
     }
 
+    @SneakyThrows
     private void sendMessage(long chatId, String textToSend) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -122,23 +135,25 @@ public class MemesBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            throw new TelegramException("Telegram exception occurred while sending message",e);
         }
     }
 
+    @SneakyThrows
     private void sendStartKeyboard(long chatId){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("Choose further action");
-        service.setKeyBoard(message);
+        service.setInitialKeyBoard(message);
 
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            throw new TelegramException("Telegram exception occurred while setting initial keyboard",e);
         }
     }
 
+    @SneakyThrows
     private void sendImage(long chatId, String fileId) {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
@@ -150,46 +165,53 @@ public class MemesBot extends TelegramLongPollingBot {
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
 
-    public void sendGreetingImage(long chatId){
+    @SneakyThrows
+    public void sendGreetingImage(long chatId) throws IOException {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
-
         sendPhotoRequest.setParseMode("HTML");
-        sendPhotoRequest.setPhoto(new InputFile(new File("greet.jpg")));
 
+        extracted(sendPhotoRequest,"static/images/greet.jpg","greet.jpg");
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
+    //TODO change the method name
+    private static void extracted(SendPhoto sendPhotoRequest, String filePath, String fileName) throws IOException {
+        Resource resource = new ClassPathResource(filePath);
+        InputStream inputStream = resource.getInputStream();
+        sendPhotoRequest.setPhoto(new InputFile(inputStream, fileName));
+    }
 
+    @SneakyThrows
     public void sendDefaultImage(long chatId) {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
 
         sendPhotoRequest.setParseMode("HTML");
-        sendPhotoRequest.setCaption("Лох");
+        extracted(sendPhotoRequest,"static/images/image.jpg","image.jpg");
         sendPhotoRequest.setPhoto(new InputFile(new File("image.jpg")));
 
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
 
-    public void uploadImage(String file_id) throws IOException, TelegramApiException {
+    public void uploadImage(String fileId) throws IOException, TelegramApiException {
 
         final GetFile getFileMethod = new GetFile();
-        getFileMethod.setFileId(file_id);
+        getFileMethod.setFileId(fileId);
 
         org.telegram.telegrambots.meta.api.objects.File file = execute(getFileMethod);
-        fileProcessor.save(file_id, file);
+        fileProcessor.save(fileId, file);
     }
 }
 

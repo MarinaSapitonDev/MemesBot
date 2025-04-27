@@ -1,6 +1,7 @@
 package com.sapiton.memesbot.service;
 
-import com.sapiton.memesbot.util.actions.Button;
+import com.sapiton.memesbot.util.Button;
+import com.sapiton.memesbot.util.actions.ButtonsAction;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
@@ -18,26 +19,29 @@ public class MemesBotService {
 
     public static final int BUTTONS_PER_ROW = 2;
 
-    public String getFileId(Update update) {
+    public String getFileId(final Update update) {
         List<PhotoSize> photos = update.getMessage().getPhoto();
         // Select the highest resolution photo (the last one in the list)
         return photos.get(photos.size() - 1).getFileId();
     }
 
-    public void setKeyBoard(SendMessage message) {
-        createButtons(message, initializeButtons());
+    public void setInitialKeyBoard(final SendMessage message) {
+        message.setReplyMarkup(createButtons( initializeDefaultButtons()));
     }
 
-    public List<Button> initializeButtons(){
+    private List<Button> initializeDefaultButtons(){
         List<Button> buttons = new ArrayList<>();
-        buttons.add(new Button(ADD.name(), ADD.name()));
-        buttons.add(new Button(FIND.name(), FIND.name()));
-        buttons.add(new Button(SHOW.name(), SHOW.name()));
+        buttons.add(new Button(ADD.getText(), ADD.getText()));
+        buttons.add(new Button(FIND.getText(), FIND.getText()));
+        buttons.add(new Button(SHOW.getText(), SHOW.getText()));
         return buttons;
     }
 
-    public void createButtons(SendMessage message, List<Button> buttons) {
+    public void setKeyBoard(final SendMessage message, final ButtonsAction action, final Update update) {
+        message.setReplyMarkup(createButtons(action.doAction(update)));
+    }
 
+    private InlineKeyboardMarkup createButtons( List<Button> buttons) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
 
@@ -56,7 +60,6 @@ public class MemesBotService {
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.setKeyboard(rowList);
-        message.setReplyMarkup(inlineKeyboardMarkup);
+        return inlineKeyboardMarkup;
     }
-    //TODO ask Vitalij to review the code
 }

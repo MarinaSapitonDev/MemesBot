@@ -1,23 +1,23 @@
 package com.sapiton.memesbot.util.actions;
 
-import java.util.HashMap;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
-import static com.sapiton.memesbot.util.Buttons.*;
+
+@Component
 
 public class ButtonsActionsFactory {
-    private static final Map<String, ButtonsAction> actions = new HashMap<>();
-
-    static {
-        actions.put(ADD.name(),new Add());
-        actions.put(FIND.name(),new Find());
-        actions.put(SHOW.name(),new Show());
+    private final Map<String, ButtonsAction> actions;
+    private ButtonsActionsFactory(Map<String, ButtonsAction> actions){
+        this.actions = actions;
     }
-
-    public static ButtonsAction getAction(String buttonType){
+    public ButtonsAction getAction(String buttonType) {
+        //TODO add proper logging
+        actions.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value.getClass().getName()));
         ButtonsAction action = actions.get(buttonType);
-        if(action==null)
-            throw new IllegalArgumentException();
+        if (action == null)
+            throw new IllegalArgumentException("Action not found for button type: " + buttonType);
         return action;
     }
 }
