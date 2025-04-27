@@ -39,27 +39,27 @@ public class ActionsConfig {
     }
 
     @Bean
-    public Add addAction(MemesBotService service) {
-        return new Add(service);
+    public Add addAction() {
+        return new Add();
     }
 
     @Bean
-    public Find findAction(MemesBotService service) {
-        return new Find(service);
+    public Find findAction() {
+        return new Find();
     }
 
     @Bean
-    public Show showAction(MemesBotService service) {
-        return new Show(service);
+    public Show showAction() {
+        return new Show();
     }
 
     @Bean
-    public ChooseCategory chooseCategoryAction(MemesBotService service) {
-        return new ChooseCategory(service);
+    public ChooseCategory chooseCategoryAction() {
+        return new ChooseCategory();
     }
 
     @Bean
-    public CreateCategory createCategoryAction(MemesBotService service) {
-        return new CreateCategory(service);
+    public CreateCategory createCategoryAction() {
+        return new CreateCategory();
     }
 }

@@ -1,6 +1,5 @@
 package com.sapiton.memesbot.util.actions;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -14,6 +13,7 @@ public class ButtonsActionsFactory {
         this.actions = actions;
     }
     public ButtonsAction getAction(String buttonType) {
+        //TODO add proper logging
         actions.forEach((key, value) -> System.out.println("Key: " + key + ", Value: " + value.getClass().getName()));
         ButtonsAction action = actions.get(buttonType);
         if (action == null)

@@ -7,6 +7,7 @@ import com.sapiton.memesbot.util.actions.ButtonsAction;
 import com.sapiton.memesbot.util.actions.ButtonsActionsFactory;
 import exceptions.TelegramException;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -125,6 +126,7 @@ public class MemesBot extends TelegramLongPollingBot {
         sendMessage(chatId, " How can I help?");
     }
 
+    @SneakyThrows
     private void sendMessage(long chatId, String textToSend) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -137,6 +139,7 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
+    @SneakyThrows
     private void sendStartKeyboard(long chatId){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -150,6 +153,7 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
+    @SneakyThrows
     private void sendImage(long chatId, String fileId) {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
@@ -165,38 +169,39 @@ public class MemesBot extends TelegramLongPollingBot {
         }
     }
 
+    @SneakyThrows
     public void sendGreetingImage(long chatId) throws IOException {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
         sendPhotoRequest.setParseMode("HTML");
 
-       /* Resource resource = new ClassPathResource("images/greet.jpg");
-        File file = resource.getFile();
-        sendPhotoRequest.setPhoto(new InputFile(file));*/
-
-        Resource resource = new ClassPathResource("static/images/greet.jpg");
-        InputStream inputStream = resource.getInputStream();
-        sendPhotoRequest.setPhoto(new InputFile(inputStream, "greet.jpg"));
+        extracted(sendPhotoRequest,"static/images/greet.jpg","greet.jpg");
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
             throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
+    //TODO change the method name
+    private static void extracted(SendPhoto sendPhotoRequest, String filePath, String fileName) throws IOException {
+        Resource resource = new ClassPathResource(filePath);
+        InputStream inputStream = resource.getInputStream();
+        sendPhotoRequest.setPhoto(new InputFile(inputStream, fileName));
+    }
 
+    @SneakyThrows
     public void sendDefaultImage(long chatId) {
         SendPhoto sendPhotoRequest = new SendPhoto();
         sendPhotoRequest.setChatId(chatId);
 
         sendPhotoRequest.setParseMode("HTML");
-        sendPhotoRequest.setCaption("Лох");
-        //TODO change the path
+        extracted(sendPhotoRequest,"static/images/image.jpg","image.jpg");
         sendPhotoRequest.setPhoto(new InputFile(new File("image.jpg")));
 
         try {
             execute(sendPhotoRequest);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            throw new TelegramException("Telegram exception occurred while sending image",e);
         }
     }
 

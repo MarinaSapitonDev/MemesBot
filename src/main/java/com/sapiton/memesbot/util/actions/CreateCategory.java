@@ -12,12 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Component
 public class CreateCategory implements ButtonsAction{
-    public MemesBotService service;
-
     @Override
     public List<Button> doAction(Update update) {
-        List<Button> buttons = new ArrayList<>();
         //TODO should create category by writing its name in the text chat
-        return buttons;
+        return new ArrayList<>();
     }
 }

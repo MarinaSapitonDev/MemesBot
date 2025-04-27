@@ -6,14 +6,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
 @Component
 public class Find implements ButtonsAction {
-    public MemesBotService service;
     @Override
     public List<Button> doAction(Update update) {
-        return null;
+        return Collections.emptyList();
     }
 }
