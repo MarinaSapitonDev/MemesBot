@@ -10,7 +10,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "toBeContinued" ]
+    branches: [ "test" ]
   pull_request:
     branches: [ "toBeContinued" ]
 
@@ -44,6 +44,15 @@ jobs:
            registry: docker.io
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
+           
+    - name: Deploy the image to AWS ECS  
     
+      uses: mr-smithers-excellent/docker-build-push@v6
+      with:
+        image: memesbot
+        registry: 352159925910.dkr.ecr.eu-north-1.amazonaws.com
+    env:
+       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   
