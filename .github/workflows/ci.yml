@@ -37,7 +37,7 @@ jobs:
       
     - name: Build and push docker image 
 
-      uses: marinasapiton/memesbot/docker-build-push@v6
+      uses: mr-smithers-excellent/docker-build-push@v6
       with:
            image: marinasapiton/memesbot/memes-bot:latest
            registry: docker.io
