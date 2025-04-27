@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Validate Artifact
+        run: ls build-artifact/ || echo "Artifact not found!"
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
       # Step 1: Check out the repository
       - name: Checkout Code
         uses: actions/checkout@v3
