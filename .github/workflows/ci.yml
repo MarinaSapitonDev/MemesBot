@@ -30,6 +30,8 @@ jobs:
     - name: Use secrets for configuration 
       env: 
          BOT_TOKEN: ${{secrets.BOT_TOKEN}}
+      run:
+          echo "Runnin the bot with bot token $BOT_TOKEN"
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
