@@ -50,6 +50,7 @@ jobs:
       uses: mr-smithers-excellent/docker-build-push@v6
       with:
         image: sapiton/memesbot
+        tags: latest
         registry: 352159925910.dkr.ecr.eu-north-1.amazonaws.com
     env:
        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
